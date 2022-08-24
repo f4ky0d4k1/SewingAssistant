@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">Швейный бухгалтер</string>
+    <string name="title_models">Модели</string>
+    <string name="label_create">Добавить</string>
+    <string name="title_positions">Позиции</string>
+    <string name="title_operations">Операции</string>
+    <string name="title_report">Итоги</string>
+    <string name="hint_name">Название</string>
+    <string name="label_position_cost">Цена</string>
+    <string name="label_position_expand">Добавить</string>
+    <string name="label_add_operations">Добавить</string>
+    <string name="label_hide">Скрыть</string>
+    <string name="label_save">Сохранить</string>
+    <string name="label_update">Изменить</string>
+    <string name="label_delete">Удалить</string>
+    <string name="label_date">Дата</string>
+    <string name="toast_wrong_data">Неправильный формат данных</string>
+    <string name="toast_constraint_delete_position">Невозможно удалить позицию, сначала удалите связанные операции</string>
+    <string name="toast_create_position_empty_cost">Введите цену!</string>
+    <string name="toast_constraint_unique_position">Такая позиция уже существет</string>
+    <string name="toast_constraint_delete_model">Невозможно удалить модель, сначала удалите связанные операции</string>
+    <string name="toast_constraint_unique_model">Такая модель уже существет</string>
+    <string name="toast_constraint_unique_article">Такой артикул уже существет</string>
+    <string name="toast_constraint_delete_article">Невозможно удалить артукул, сначала удалите связанные операции</string>
+    <string name="error">Ошибка, обратитесь к администратору приложения</string>
+    <string name="pieces">шт.</string>
+
+    <string-array name="months">
+        <item>Январь</item>
+        <item>Февраль</item>
+        <item>Март</item>
+        <item>Апрель</item>
+        <item>Май</item>
+        <item>Июнь</item>
+        <item>Июль</item>
+        <item>Август</item>
+        <item>Сентябрь</item>
+        <item>Октябрь</item>
+        <item>Ноябрь</item>
+        <item>Декабрь</item>
+    </string-array>
+
+</resources>

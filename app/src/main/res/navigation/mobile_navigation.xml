@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_operations">
+
+    <fragment
+        android:id="@+id/navigation_models"
+        android:layout_height="match_parent"
+        android:name="ru.dharatyan.sewingassistant.ui.models.ModelsFragment"
+        android:label="@string/title_models"
+        tools:layout="@layout/fragment_models" />
+
+    <fragment
+        android:id="@+id/navigation_positions"
+        android:layout_height="match_parent"
+        android:name="ru.dharatyan.sewingassistant.ui.positions.PositionsFragment"
+        android:label="@string/title_positions"
+        tools:layout="@layout/fragment_positions" />
+
+    <fragment
+        android:id="@+id/navigation_operations"
+        android:layout_height="match_parent"
+        android:name="ru.dharatyan.sewingassistant.ui.operations.OperationsFragment"
+        android:label="@string/title_operations"
+        tools:layout="@layout/fragment_operations" />
+
+    <fragment
+        android:id="@+id/navigation_report"
+        android:layout_height="match_parent"
+        android:name="ru.dharatyan.sewingassistant.ui.report.ReportFragment"
+        android:label="@string/title_report"
+        tools:layout="@layout/fragment_report" />
+</navigation>
