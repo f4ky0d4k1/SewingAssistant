@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
@@ -17,18 +18,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Currency;
 import java.util.Locale;
+import java.util.Objects;
 
 import ru.dharatyan.sewingassistant.R;
 import ru.dharatyan.sewingassistant.model.entity.Article;
 import ru.dharatyan.sewingassistant.model.entity.Position;
+import ru.dharatyan.sewingassistant.ui.DeleteDialogFragment;
 
 public class PositionAdapter extends PagedListAdapter<Position, PositionAdapter.ViewHolder> {
 
     private final PositionsViewModel positionsViewModel;
+    Fragment fragment;
 
     protected PositionAdapter(@NonNull DiffUtil.ItemCallback<Position> diffCallback, Fragment fragment) {
         super(diffCallback);
         positionsViewModel = new ViewModelProvider(fragment).get(PositionsViewModel.class);
+        this.fragment = fragment;
     }
 
     @NonNull
@@ -40,76 +45,65 @@ public class PositionAdapter extends PagedListAdapter<Position, PositionAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(getItem(position));
+        holder.bind(Objects.requireNonNull(getItem(position)));
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        final TextView nameEdit, costEdit;
-        final Button button;
-        Long positionId;
-        String oldName;
-        double oldCost;
-
-        public void bind(Position position) {
-            String name = position.getName();
-            nameEdit.setText(name);
-            oldName = name;
-            double cost = position.getCost();
-            costEdit.setText(String.valueOf(cost));
-            oldCost = cost;
-            positionId = position.getId();
-
-            if (positionId != null) {
-                button.setVisibility(View.VISIBLE);
-                button.setClickable(true);
-            } else {
-                button.setVisibility(View.INVISIBLE);
-                button.setClickable(false);
-            }
-        }
+        private final TextView nameEdit, costEdit;
+        private Position position;
 
         ViewHolder(View view) {
             super(view);
 
             nameEdit = view.findViewById(R.id.text_position_name);
             costEdit = view.findViewById(R.id.text_position_cost);
-            button = view.findViewById(R.id.button_position_delete);
+            Button button = view.findViewById(R.id.button_position_delete);
             ((TextView) view.findViewById(R.id.currency_cost)).setText(Currency.getInstance(Locale.getDefault()).getSymbol());
 
             nameEdit.setOnKeyListener((v, keyCode, event) -> {
                 if (event.getAction() == KeyEvent.ACTION_DOWN &&
-                        keyCode == KeyEvent.KEYCODE_ENTER &&
-                        nameEdit.length() > 0 &&
-                        costEdit.length() > 0) {
+                        keyCode == KeyEvent.KEYCODE_ENTER) {
                     String name = nameEdit.getText().toString();
-                    double cost = Double.parseDouble(costEdit.getText().toString());
-                    if (!name.equals(oldName) && cost > 0) {
-                        positionsViewModel.savePosition(new Position(positionId, name, cost));
-                        nameEdit.setText(oldName);
+                    if (!name.equals(position.getName())) {
+                        positionsViewModel.savePosition(new Position(position.getId(), name, parseCost()));
+                        nameEdit.setText(position.getName());
                     }
-                    return true;
                 }
                 return false;
             });
 
             costEdit.setOnKeyListener((v, keyCode, event) -> {
                 if (event.getAction() == KeyEvent.ACTION_DOWN &&
-                        keyCode == KeyEvent.KEYCODE_ENTER &&
-                        nameEdit.length() > 0 &&
-                        costEdit.length() > 0) {
+                        keyCode == KeyEvent.KEYCODE_ENTER) {
                     String name = nameEdit.getText().toString();
-                    double cost = Double.parseDouble(costEdit.getText().toString());
-                    if (cost != oldCost && cost > 0) {
-                        positionsViewModel.savePosition(new Position(positionId, name, cost));
-                        costEdit.setText(String.valueOf(oldCost));
+                    double cost = parseCost();
+                    if (cost != position.getCost()) {
+                        positionsViewModel.savePosition(new Position(position.getId(), name, cost));
+                        costEdit.setText(String.valueOf(position.getCost()));
                     }
-                    return true;
                 }
                 return false;
             });
 
-            button.setOnClickListener(v -> positionsViewModel.deletePositionById(positionId));
+            button.setOnClickListener(v -> new DeleteDialogFragment(
+                    (dialogInterface, i) -> positionsViewModel.deletePositionById(position.getId()),
+                    (dialogInterface, i) -> dialogInterface.cancel())
+                    .show(fragment.getParentFragmentManager(), "deleteDialog"));
+        }
+
+        public void bind(Position position) {
+            this.position = position;
+            nameEdit.setText(position.getName());
+            costEdit.setText(String.valueOf(position.getCost()));
+        }
+
+        private double parseCost() {
+            try {
+                return Double.parseDouble(costEdit.getText().toString());
+            } catch (NumberFormatException e) {
+                return 0;
+            }
         }
     }
 }

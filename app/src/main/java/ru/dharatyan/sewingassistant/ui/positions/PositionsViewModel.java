@@ -7,14 +7,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
-
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import ru.dharatyan.sewingassistant.AppDatabase;
 import ru.dharatyan.sewingassistant.R;
@@ -24,17 +18,15 @@ import ru.dharatyan.sewingassistant.model.entity.Position;
 public class PositionsViewModel extends AndroidViewModel {
 
     private final PositionDao positionDao;
-    private final Application application;
 
     public PositionsViewModel(@NonNull Application application) {
         super(application);
         positionDao = AppDatabase.getInstance(application).positionDao();
-        this.application = application;
     }
 
     public LiveData<PagedList<Position>> getAllPositions() {
         return new LivePagedListBuilder<>(
-                positionDao.getAll(),
+                positionDao.getFactoryAll(),
                 new PagedList.Config.Builder()
                         .setEnablePlaceholders(false)
                         .setPageSize(10)
@@ -43,12 +35,16 @@ public class PositionsViewModel extends AndroidViewModel {
     }
 
     public void savePosition(Position position) {
-        try {
+        if (position.getName().length() <= 0)
+            Toast.makeText(getApplication().getApplicationContext(), R.string.toast_constraint_create_position_empty_name, Toast.LENGTH_LONG).show();
+        else if (position.getCost() <= 0)
+            Toast.makeText(getApplication().getApplicationContext(), R.string.toast_constraint_create_position_empty_cost, Toast.LENGTH_LONG).show();
+        else try {
             if (position.getId() == null)
                 positionDao.insert(position);
             else positionDao.update(position);
         } catch (SQLiteConstraintException e) {
-            Toast.makeText(application.getApplicationContext(), R.string.toast_constraint_unique_position, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplication().getApplicationContext(), R.string.toast_constraint_unique_position, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -56,7 +52,7 @@ public class PositionsViewModel extends AndroidViewModel {
         try {
             positionDao.deleteById(positionId);
         } catch (SQLiteConstraintException e) {
-            Toast.makeText(application.getApplicationContext(), R.string.toast_constraint_delete_position, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplication().getApplicationContext(), R.string.toast_constraint_delete_position, Toast.LENGTH_LONG).show();
         }
 
     }

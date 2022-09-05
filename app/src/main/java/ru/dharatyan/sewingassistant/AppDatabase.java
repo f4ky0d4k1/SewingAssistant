@@ -15,7 +15,7 @@ import ru.dharatyan.sewingassistant.model.entity.Article;
 import ru.dharatyan.sewingassistant.model.entity.Model;
 import ru.dharatyan.sewingassistant.model.entity.Operation;
 import ru.dharatyan.sewingassistant.model.entity.Position;
-import ru.dharatyan.sewingassistant.util.converters.DBConverter;
+import ru.dharatyan.sewingassistant.model.converter.DBConverter;
 
 @Database(entities = {Position.class, Operation.class, Model.class, Article.class}, exportSchema = false, version = 1)
 @TypeConverters({DBConverter.class})
@@ -28,10 +28,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ModelDao modelDao();
 
     public abstract ArticleDao articleDao();
-
-//    public abstract ArticleWithModelDao articleWithModelDao();
-//
-//    public  abstract OperationWithPositionAndArticleDao operationWithPositionAndArticleDao();
 
     private static AppDatabase INSTANCE;
 

@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import java.util.Objects;
+
 import ru.dharatyan.sewingassistant.R;
 import ru.dharatyan.sewingassistant.model.entity.Article;
 
@@ -36,48 +38,39 @@ public class ArticlesAdapter extends PagedListAdapter<Article, ArticlesAdapter.V
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(getItem(position));
+        holder.bind(Objects.requireNonNull(getItem(position)));
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final Button buttonDelete;
         private final TextView nameEdit;
         private Article article;
-
-        public void bind(Article article) {
-            nameEdit.setText(article.getName());
-
-            if (article.getId() != null) {
-                buttonDelete.setVisibility(View.VISIBLE);
-                buttonDelete.setClickable(true);
-            } else {
-                buttonDelete.setVisibility(View.INVISIBLE);
-                buttonDelete.setClickable(false);
-            }
-            this.article = article;
-        }
 
         ViewHolder(View view) {
             super(view);
 
             nameEdit = view.findViewById(R.id.text_article_name);
-            buttonDelete = view.findViewById(R.id.button_article_delete);
+            Button buttonDelete = view.findViewById(R.id.button_article_delete);
 
             nameEdit.setOnKeyListener((v, keyCode, event) -> {
                 if (event.getAction() == KeyEvent.ACTION_DOWN &&
-                        keyCode == KeyEvent.KEYCODE_ENTER &&
-                        nameEdit.length() > 0) {
+                        keyCode == KeyEvent.KEYCODE_ENTER) {
                     String name = nameEdit.getText().toString();
-                    if (!name.equals(article.getName()))
-                            modelsViewModel.saveArticle(new Article(article.getId(), name, article.getModelId()));
-                            article.setName(name);
+                    if (!name.equals(article.getName())) {
+                        modelsViewModel.saveArticle(new Article(article.getId(), name, article.getModelId()));
+                        nameEdit.setText(article.getName());
+                    }
                     return true;
                 }
                 return false;
             });
 
             buttonDelete.setOnClickListener(v -> modelsViewModel.deleteArticleById(article.getId()));
+        }
+
+        public void bind(Article article) {
+            nameEdit.setText(article.getName());
+            this.article = article;
         }
     }
 }

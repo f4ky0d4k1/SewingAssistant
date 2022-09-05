@@ -21,13 +21,11 @@ public class ModelsViewModel extends AndroidViewModel {
 
     private final ModelDao modelDao;
     private final ArticleDao articleDao;
-    private final Application application;
 
     public ModelsViewModel(@NonNull Application application) {
         super(application);
         modelDao = AppDatabase.getInstance(application).modelDao();
         articleDao = AppDatabase.getInstance(application).articleDao();
-        this.application = application;
     }
 
     public LiveData<PagedList<Model>> getAllModels() {
@@ -41,12 +39,14 @@ public class ModelsViewModel extends AndroidViewModel {
     }
 
     public void saveModel(Model model) {
-        try {
+        if (model.getName().length() <= 0)
+            Toast.makeText(getApplication().getApplicationContext(), R.string.toast_constraint_create_model_empty_name, Toast.LENGTH_LONG).show();
+        else try {
             if (model.getId() == null)
                 modelDao.insert(model);
             else modelDao.update(model);
         } catch (SQLiteConstraintException e) {
-            Toast.makeText(application.getApplicationContext(), R.string.toast_constraint_unique_model, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplication().getApplicationContext(), R.string.toast_constraint_unique_model, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -54,7 +54,7 @@ public class ModelsViewModel extends AndroidViewModel {
         try {
             modelDao.deleteById(modelId);
         } catch (SQLiteConstraintException e) {
-            Toast.makeText(application.getApplicationContext(), R.string.toast_constraint_delete_model, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplication().getApplicationContext(), R.string.toast_constraint_delete_model, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -69,12 +69,14 @@ public class ModelsViewModel extends AndroidViewModel {
     }
 
     public void saveArticle(Article article) {
-        try {
+        if (article.getName().length() <= 0)
+            Toast.makeText(getApplication().getApplicationContext(), R.string.toast_constraint_create_article_empty_name, Toast.LENGTH_LONG).show();
+        else try {
             if (article.getId() == null)
                 articleDao.insert(article);
             else articleDao.update(article);
-        } catch (SQLiteConstraintException e ) {
-            Toast.makeText(application.getApplicationContext(), R.string.toast_constraint_unique_article, Toast.LENGTH_LONG).show();
+        } catch (SQLiteConstraintException e) {
+            Toast.makeText(getApplication().getApplicationContext(), R.string.toast_constraint_unique_article, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -82,7 +84,7 @@ public class ModelsViewModel extends AndroidViewModel {
         try {
             articleDao.deleteById(articleId);
         } catch (SQLiteConstraintException e) {
-            Toast.makeText(application.getApplicationContext(), R.string.toast_constraint_delete_article, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplication().getApplicationContext(), R.string.toast_constraint_delete_article, Toast.LENGTH_LONG).show();
         }
     }
 }

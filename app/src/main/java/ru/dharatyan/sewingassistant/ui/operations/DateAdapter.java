@@ -21,6 +21,7 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import ru.dharatyan.sewingassistant.R;
@@ -29,6 +30,7 @@ import ru.dharatyan.sewingassistant.model.entity.Date;
 import ru.dharatyan.sewingassistant.model.entity.Model;
 import ru.dharatyan.sewingassistant.model.entity.Operation;
 import ru.dharatyan.sewingassistant.model.entity.Position;
+import ru.dharatyan.sewingassistant.ui.DeleteDialogFragment;
 import ru.dharatyan.sewingassistant.ui.view.UntouchableRecyclerView;
 import ru.dharatyan.sewingassistant.util.diffutil.OperationDiffUtilCallback;
 
@@ -52,16 +54,17 @@ public class DateAdapter extends PagedListAdapter<Date, DateAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(getItem(position));
+        holder.bind(Objects.requireNonNull(getItem(position)));
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        final Button deleteButton, showButton;
-        final TextView dateText, totalText;
-        final UntouchableRecyclerView operationsRecyclerView;
-        final OperationsInDatesAdapter operationsAdapter;
+        private final Button deleteButton, showButton;
+        private final TextView dateText, totalText;
+        private final UntouchableRecyclerView operationsRecyclerView;
+        private final OperationsInDatesAdapter operationsAdapter;
         private Date date;
+        private LiveData<PagedList<Operation>> operationLivePagedList;
 
         ViewHolder(View view) {
             super(view);
@@ -82,20 +85,24 @@ public class DateAdapter extends PagedListAdapter<Date, DateAdapter.ViewHolder> 
 
             deleteButton = view.findViewById(R.id.button_date_delete);
             deleteButton.setOnClickListener(v -> {
-                if (date != null) operationsViewModel.deleteOperationsByDate(date);
+                new DeleteDialogFragment(
+                        (dialogInterface, i) -> operationsViewModel.deleteOperationsByDate(date),
+                        (dialogInterface, i) -> dialogInterface.cancel())
+                        .show(fragment.getParentFragmentManager(), "deleteDialog");
             });
         }
 
         public void bind(Date date) {
             this.date = date;
-
             dateText.setText(date.toString());
-            LiveData<PagedList<Operation>> operationLivePagedList = operationsViewModel.getOperationsByDate(date);
+
+            if (operationLivePagedList != null)
+                operationLivePagedList.removeObservers(fragment.getViewLifecycleOwner());
+            operationLivePagedList = operationsViewModel.getOperationsByDate(date);
             operationLivePagedList.observe(fragment.getViewLifecycleOwner(), data -> {
                 totalText.setText(NumberFormat.getCurrencyInstance(Locale.getDefault()).format(operationsViewModel.getTotalByDate(date)));
                 operationsAdapter.submitList(data);
             });
-
         }
 
         private void onViewClick() {

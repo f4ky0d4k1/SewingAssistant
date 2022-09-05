@@ -29,8 +29,12 @@ public interface OperationDao {
     @Query("SELECT * FROM operation WHERE position_id = :position_id AND article_id = :article_id AND date = :date LIMIT 1")
     Operation getByPositionAndArticleAndDate(long position_id, long article_id, Date date);
 
-    @Query("SELECT * FROM operation WHERE date = :date ORDER BY date")
-    DataSource.Factory<Integer, Operation> getByDate(Date date);
+    @Query("SELECT o.* FROM operation o LEFT JOIN article a ON o.article_id = a.id WHERE date BETWEEN :startDate AND :endDate ORDER BY o.date, a.model_id, o.article_id, o.position_id")
+    List<Operation> getBetweenDates(Date startDate, Date endDate);
+
+    @Query("SELECT o.* FROM operation o LEFT JOIN article a ON o.article_id = a.id WHERE date = :date ORDER BY o.date, a.model_id, o.article_id, o.position_id")
+    DataSource.Factory<Integer, Operation> getFactoryByDate(Date date);
+
 
     @Query("SELECT total(o.quantity * p.cost) FROM operation o LEFT JOIN position p ON o.position_id = p.id WHERE date = :date")
     Double getTotalByDate(Date date);

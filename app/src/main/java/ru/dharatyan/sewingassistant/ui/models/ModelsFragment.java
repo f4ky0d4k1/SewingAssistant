@@ -1,11 +1,9 @@
 package ru.dharatyan.sewingassistant.ui.models;
 
-import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -39,11 +37,8 @@ public class ModelsFragment extends Fragment {
         modelsViewModel.getAllModels().observe(getViewLifecycleOwner(), modelsAdapter::submitList);
 
         final EditText modelNameText = binding.textModelName;
-        final Button buttonCreate = binding.buttonModelCreate;
-        buttonCreate.setOnClickListener(view -> {
-            if (modelNameText.length() > 0)
-                modelsViewModel.saveModel(new Model(null, modelNameText.getText().toString()));
-        });
+        binding.buttonModelCreate.setOnClickListener(view ->
+                modelsViewModel.saveModel(new Model(null, modelNameText.getText().toString())));
         return root;
     }
 

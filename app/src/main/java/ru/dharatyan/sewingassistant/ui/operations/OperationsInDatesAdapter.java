@@ -8,14 +8,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.PagedList;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.NumberFormat;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Objects;
 
 import ru.dharatyan.sewingassistant.R;
 import ru.dharatyan.sewingassistant.model.entity.Article;
@@ -25,7 +24,7 @@ import ru.dharatyan.sewingassistant.model.entity.Position;
 
 public class OperationsInDatesAdapter extends PagedListAdapter<Operation, OperationsInDatesAdapter.ViewHolder> {
 
-    Fragment fragment;
+    private final Fragment fragment;
     private final OperationsViewModel operationsViewModel;
 
     protected OperationsInDatesAdapter(@NonNull DiffUtil.ItemCallback<Operation> diffCallback, Fragment fragment) {
@@ -53,20 +52,23 @@ public class OperationsInDatesAdapter extends PagedListAdapter<Operation, Operat
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         final TextView positionText, articleText, quantityText, totalText;
+        final View view;
+
+        ViewHolder(View view) {
+            super(view);
+            this.view = view;
+            totalText = view.findViewById(R.id.text_date_operation_total);
+            quantityText = view.findViewById(R.id.text_date_operation_quantity);
+            positionText = view.findViewById(R.id.text_date_operation_position);
+            articleText = view.findViewById(R.id.text_date_operation_article);
+        }
 
         public void bind(Operation operation, Position position, Article article, Model model) {
             totalText.setText(NumberFormat.getCurrencyInstance(Locale.getDefault()).format(operation.getQuantity() * position.getCost()));
             positionText.setText(String.format("%s (%s)", position.getName(), NumberFormat.getCurrencyInstance(Locale.getDefault()).format(position.getCost())));
             articleText.setText(String.format("%s (%s)", article.getName(), model.getName()));
-            quantityText.setText(String.format(Locale.getDefault(), "%d %s", operation.getQuantity(), fragment.getContext().getText(R.string.pieces)));
-        }
-
-        ViewHolder(View view) {
-            super(view);
-            totalText = view.findViewById(R.id.text_date_operation_total);
-            quantityText = view.findViewById(R.id.text_date_operation_quantity);
-            positionText = view.findViewById(R.id.text_date_operation_position);
-            articleText = view.findViewById(R.id.text_date_operation_article);
+            quantityText.setText(String.format(Locale.getDefault(), "%d %s", operation.getQuantity(), fragment.requireContext().getText(R.string.pieces)));
+            view.setBackgroundResource(operation.isEnabled() ? R.drawable.alert_light_frame : R.drawable.alert_dark_frame);
         }
     }
 }

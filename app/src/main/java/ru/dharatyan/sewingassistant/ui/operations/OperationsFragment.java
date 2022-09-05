@@ -24,8 +24,6 @@ public class OperationsFragment extends Fragment {
 
     private OperationsViewModel operationsViewModel;
     private FragmentOperationsBinding binding;
-    private RecyclerView dateRecyclerView;
-    private Button addDateButton;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -34,25 +32,8 @@ public class OperationsFragment extends Fragment {
         binding = FragmentOperationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        dateRecyclerView = binding.recyclerViewDates;
-        addDateButton = binding.buttonNewDate;
-
-        initDateButtonClick();
-        initDateRecyclerView();
-
-        return root;
-    }
-
-    private void initDateRecyclerView() {
-        dateRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        LiveData<PagedList<Date>> dateLivePagedList = operationsViewModel.getDates();
-        DateAdapter adapter = new DateAdapter(new DateDiffUtilCallback(), this);
-        dateLivePagedList.observe(getViewLifecycleOwner(), adapter::submitList);
-        dateRecyclerView.setAdapter(adapter);
-    }
-
-    private void initDateButtonClick() {
-        addDateButton.setOnClickListener(view -> {
+        RecyclerView dateRecyclerView = binding.recyclerViewDates;
+        binding.buttonNewDate.setOnClickListener(view -> {
             FragmentTransaction fragmentTransaction = this.getParentFragmentManager().beginTransaction();
             Fragment fragment = new DateEditFragment();
             fragment.setArguments(DateEditFragment.prepareBundle(null));
@@ -61,11 +42,20 @@ public class OperationsFragment extends Fragment {
             fragmentTransaction.setReorderingAllowed(true);
             fragmentTransaction.commit();
         });
+
+        dateRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        LiveData<PagedList<Date>> dateLivePagedList = operationsViewModel.getDates();
+        DateAdapter adapter = new DateAdapter(new DateDiffUtilCallback(), this);
+        dateLivePagedList.observe(getViewLifecycleOwner(), adapter::submitList);
+        dateRecyclerView.setAdapter(adapter);
+
+        return root;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+        operationsViewModel = null;
     }
 }

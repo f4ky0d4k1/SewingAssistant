@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity(
         tableName = "operation",
-        indices = @Index(value = {"date", "position_id"}, name = "idx_unq_date_position", unique = true),
+        indices = @Index(value = {"date", "position_id", "article_id"}, name = "idx_unq_date_position_article", unique = true),
         foreignKeys = {
                 @ForeignKey(entity = Position.class, parentColumns = "id", childColumns = "position_id", onDelete = ForeignKey.RESTRICT, onUpdate = CASCADE),
                 @ForeignKey(entity = Article.class, parentColumns = "id", childColumns = "article_id", onDelete = ForeignKey.RESTRICT, onUpdate = CASCADE)})
@@ -30,6 +30,7 @@ public class Operation {
     @ColumnInfo(name = "id")
     private Long id;
     private int quantity;
+    private boolean enabled;
     private Date date;
     @ColumnInfo(name = "position_id", index = true)
     private Long positionId;

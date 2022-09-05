@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import ru.dharatyan.sewingassistant.R;
 import ru.dharatyan.sewingassistant.databinding.FragmentEditDateBinding;
 import ru.dharatyan.sewingassistant.model.entity.Article;
 import ru.dharatyan.sewingassistant.model.entity.Date;
@@ -46,10 +44,8 @@ public class DateEditFragment extends Fragment {
     private ArrayAdapter<Integer> daySpinnerAdapter;
     private OperationsEditAdapter operationsEditAdapter;
 
-    private Button createButton;
     private EditText quantityEdit;
     private Spinner positionSpinner;
-    private Spinner modelSpinner;
     private Spinner articleSpinner;
 
     private LiveData<PagedList<Article>> articleLivePagedList;
@@ -180,9 +176,7 @@ public class DateEditFragment extends Fragment {
         if (operationLivePagedList != null)
             operationLivePagedList.removeObservers(getViewLifecycleOwner());
         operationLivePagedList = operationsViewModel.getOperationsByDate(selectedDate);
-        operationLivePagedList.observe(getViewLifecycleOwner(), data -> {
-            operationsEditAdapter.submitList(data);
-        });
+        operationLivePagedList.observe(getViewLifecycleOwner(), data -> operationsEditAdapter.submitList(data));
     }
 
     public static Bundle prepareBundle(Date date) {
@@ -194,15 +188,15 @@ public class DateEditFragment extends Fragment {
 
     private void initBundle() {
         Bundle bundle = getArguments();
-        if (bundle != null) selectedDate = (Date) bundle.getParcelable(Date.class.getSimpleName());
+        if (bundle != null) selectedDate = bundle.getParcelable(Date.class.getSimpleName());
         if (selectedDate == null) selectedDate = new Date();
     }
 
     private void initOperationCreateLayout() {
-        createButton = binding.buttonOperationCreate;
+        Button createButton = binding.buttonOperationCreate;
         quantityEdit = binding.textOperationQuantity;
         positionSpinner = binding.spinnerPosition;
-        modelSpinner = binding.spinnerModel;
+        Spinner modelSpinner = binding.spinnerModel;
         articleSpinner = binding.spinnerArticle;
 
         ArrayAdapter<Position> positionAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item);
@@ -244,10 +238,10 @@ public class DateEditFragment extends Fragment {
             }
         });
 
-        createButton.setOnClickListener(v -> save());
+        createButton.setOnClickListener(v -> saveOperation());
     }
 
-    private void save() {
+    private void saveOperation() {
         Position selectedPosition = (Position) positionSpinner.getSelectedItem();
         Article selectedArticle = (Article) articleSpinner.getSelectedItem();
         Integer selectedQuantity;
@@ -258,7 +252,7 @@ public class DateEditFragment extends Fragment {
         }
         if (selectedPosition == null || selectedArticle == null ||
                 selectedQuantity == null || selectedQuantity <= 0) return;
-        operationsViewModel.saveOperation(new Operation(null, selectedQuantity, selectedDate, selectedPosition.getId(), selectedArticle.getId()));
+        operationsViewModel.saveOperation(new Operation(null, selectedQuantity, true, selectedDate, selectedPosition.getId(), selectedArticle.getId()));
     }
 
     @Override

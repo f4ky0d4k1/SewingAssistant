@@ -1,29 +1,58 @@
 <resources>
     <string name="app_name">Швейный бухгалтер</string>
-    <string name="title_models">Модели</string>
-    <string name="label_create">Добавить</string>
     <string name="title_positions">Позиции</string>
     <string name="title_operations">Операции</string>
     <string name="title_report">Итоги</string>
-    <string name="hint_name">Название</string>
-    <string name="label_position_cost">Цена</string>
-    <string name="label_position_expand">Добавить</string>
-    <string name="label_add_operations">Добавить</string>
-    <string name="label_hide">Скрыть</string>
-    <string name="label_save">Сохранить</string>
-    <string name="label_update">Изменить</string>
-    <string name="label_delete">Удалить</string>
-    <string name="label_date">Дата</string>
+    <string name="title_models">Модели</string>
+
+    <string name="hint_model_name">Модель</string>
+    <string name="hint_article_name">Артикул</string>
+    <string name="hint_position_name">Позиция</string>
+    <string name="hint_position_cost">Цена</string>
+    <string name="hint_lastname">Фамилия</string>
+    <string name="hint_month">Месяц</string>
+    <string name="hint_paid">Аванс</string>
+
+    <string name="label_text_reports">Ваши отчёты:</string>
+    <string name="label_button_create_report">Создать отчёт</string>
+    <string name="label_button_create">Добавить</string>
+    <string name="label_operations_add">Добавить</string>
+    <string name="label_start_date">Начальная дата</string>
+    <string name="label_end_date">Конечная дата</string>
+
+    <string name="pieces">шт.</string>
+
     <string name="toast_wrong_data">Неправильный формат данных</string>
-    <string name="toast_constraint_delete_position">Невозможно удалить позицию, сначала удалите связанные операции</string>
-    <string name="toast_create_position_empty_cost">Введите цену!</string>
+    <string name="error">Ошибка, обратитесь к администратору приложения</string>
+
+    <string name="toast_constraint_create_position_empty_name">Введите название позиции</string>
+    <string name="toast_constraint_create_position_empty_cost">Введите цену</string>
     <string name="toast_constraint_unique_position">Такая позиция уже существет</string>
-    <string name="toast_constraint_delete_model">Невозможно удалить модель, сначала удалите связанные операции</string>
+    <string name="toast_constraint_delete_position">Невозможно удалить позицию, сначала удалите связанные операции</string>
+
+    <string name="toast_constraint_create_model_empty_name">Введите название модели</string>
     <string name="toast_constraint_unique_model">Такая модель уже существет</string>
+    <string name="toast_constraint_delete_model">Невозможно удалить модель, сначала удалите связанные операции</string>
+
+    <string name="toast_constraint_create_article_empty_name">Введите название артикула</string>
     <string name="toast_constraint_unique_article">Такой артикул уже существет</string>
     <string name="toast_constraint_delete_article">Невозможно удалить артукул, сначала удалите связанные операции</string>
-    <string name="error">Ошибка, обратитесь к администратору приложения</string>
-    <string name="pieces">шт.</string>
+
+    <string name="toast_constraint_create_operation_empty_cost">Введите количество</string>
+
+    <string name="dialog_delete_title">Удалить?</string>
+    <string name="dialog_delete_positive">Удалить</string>
+    <string name="dialog_delete_negative">Отмена</string>
+
+    <string name="report_label_lastname">Фамилия</string>
+    <string name="report_label_month">Месяц</string>
+    <string name="report_label_date">Дата</string>
+    <string name="report_label_article">Артиркул</string>
+    <string name="report_label_model">Модель</string>
+    <string name="report_label_salary">ЗП</string>
+    <string name="report_label_paid">Аванс</string>
+    <string name="report_label_tax">Налог</string>
+    <string name="report_label_payoff">К выплате</string>
 
     <string-array name="months">
         <item>Январь</item>

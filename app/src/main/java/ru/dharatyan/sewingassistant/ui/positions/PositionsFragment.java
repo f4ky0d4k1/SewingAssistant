@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -27,6 +26,9 @@ public class PositionsFragment extends Fragment {
     private PositionsViewModel positionsViewModel;
     private FragmentPositionsBinding binding;
 
+    private EditText positionNameEdit;
+    private EditText positionCostEdit;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         positionsViewModel =
@@ -35,26 +37,18 @@ public class PositionsFragment extends Fragment {
         binding = FragmentPositionsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final RecyclerView positionRecyclerView = binding.recyclerViewPositions;
-        positionRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        final PositionAdapter positionAdapter = new PositionAdapter(new PositionDiffUtilCallback(), this);
-        positionRecyclerView.setAdapter(positionAdapter);
-        positionsViewModel.getAllPositions().observe(getViewLifecycleOwner(), positionAdapter::submitList);
-
-        EditText positionNameEdit = binding.textPositionName;
-        EditText positionCostEdit = binding.textPositionCost;
-        Button buttonPositionSave = binding.buttonPositionCreate;
+        positionNameEdit = binding.textPositionName;
+        positionCostEdit = binding.textPositionCost;
+        RecyclerView positionRecyclerView = binding.recyclerViewPositions;
 
         binding.currencyCost.setText(Currency.getInstance(Locale.getDefault()).getSymbol());
-        buttonPositionSave.setOnClickListener(v -> {
-            try {
-                double cost = Double.parseDouble(positionCostEdit.getText().toString());
-                if (positionNameEdit.length() > 0 && cost > 0) positionsViewModel.savePosition(new Position(null, positionNameEdit.getText().toString(), cost));
-            } catch (NumberFormatException e) {
-                Toast.makeText(v.getContext(), R.string.toast_create_position_empty_cost, Toast.LENGTH_LONG).show();
-            }
-        });
+        binding.buttonPositionCreate.setOnClickListener(this::onButtonPositionSaveClick);
+
+        positionRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        PositionAdapter positionAdapter = new PositionAdapter(new PositionDiffUtilCallback(), this);
+        positionRecyclerView.setAdapter(positionAdapter);
+        positionsViewModel.getAllPositions().observe(getViewLifecycleOwner(), positionAdapter::submitList);
 
         return root;
     }
@@ -63,5 +57,13 @@ public class PositionsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void onButtonPositionSaveClick(View v) {
+        double cost = 0;
+        try {
+            cost = Double.parseDouble(positionCostEdit.getText().toString());
+        } catch (NumberFormatException ignored) { }
+        positionsViewModel.savePosition(new Position(null, positionNameEdit.getText().toString(), cost));
     }
 }

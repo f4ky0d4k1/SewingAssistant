@@ -31,10 +31,15 @@ android {
 }
 
 dependencies {
+    implementation files('libs/poishadow-all.jar')
     def room_version = "2.4.2"
+//    def poi_version = "5.2.2"
 
-    compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+
+//    implementation "com.github.SUPERCILEX.poi-android:poi:$poi_version"
+//    compileOnly "org.apache.poi:poi-ooxml:$poi_version"
 
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
